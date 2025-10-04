@@ -133,21 +133,30 @@ function App() {
     const handleHashScroll = () => scrollWithOffset(window.location.hash)
 
     // Detect browser refresh and force scroll to Home (hero)
-    const navEntry = performance.getEntriesByType('navigation')[0]
-    const isReload = navEntry && navEntry.type === 'reload'
+    let isReload = false
+    try {
+      const navEntry = performance.getEntriesByType('navigation')[0]
+      isReload = !!navEntry && navEntry.type === 'reload'
+    } catch (_) {
+      // Safe fallback: if performance API unavailable, treat as normal load
+      isReload = false
+    }
     const isAdminRoute = location.pathname.startsWith('/admin')
+    const hasHash = !!window.location.hash
 
     // Scroll on initial load (after render)
     setTimeout(() => {
       if (isReload && !isAdminRoute) {
-        // Ensure we are on home route and clear any hash
-        const newUrl = '/' + (window.location.search || '')
-        window.history.replaceState(null, '', newUrl)
+        // Only adjust URL if not already on home or if a hash exists
+        const needsUrlChange = location.pathname !== '/' || hasHash
+        if (needsUrlChange) {
+          window.history.replaceState(null, '', '/')
+        }
 
-        // Ensure we start at top and then apply smooth scroll to hero
+        // Start at top, then smooth scroll to hero without triggering navigation
         window.scrollTo({ top: 0, behavior: 'auto' })
         requestAnimationFrame(() => scrollWithOffset('hero'))
-      } else if (window.location.hash) {
+      } else if (hasHash) {
         handleHashScroll()
       }
     }, 0)

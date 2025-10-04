@@ -5,6 +5,22 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Normalize URLs by adding https:// when scheme is missing
+const normalizeUrl = (value) => {
+  if (!value) return value;
+  const v = String(value).trim();
+  if (/^https?:\/\//i.test(v)) return v;
+  return `https://${v}`;
+}
+
+// Helper: remove keys that are empty strings to avoid invalid updates
+const stripEmptyStrings = (obj) => {
+  Object.keys(obj || {}).forEach((k) => {
+    if (obj[k] === '') delete obj[k]
+  })
+  return obj
+}
+
 // Get all projects (public)
 router.get('/', async (req, res) => {
   try {
@@ -32,11 +48,11 @@ router.post('/', authenticateToken, [
     if (/^https?:\/\//.test(value)) return true
     throw new Error('imageUrl must be a valid URL or /uploads path')
   }),
-  body('liveUrl').optional({ nullable: true, checkFalsy: true }).isURL(),
-  body('githubUrl').optional({ nullable: true, checkFalsy: true }).isURL(),
+  body('liveUrl').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeUrl(v)).isURL(),
+  body('githubUrl').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeUrl(v)).isURL(),
   body('techStack').isLength({ min: 1, max: 500 }),
-  body('order').optional().isInt({ min: 0 }),
-  body('featured').optional().isBoolean()
+  body('order').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).toInt(),
+  body('featured').optional({ nullable: true, checkFalsy: true }).isBoolean().toBoolean()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -66,6 +82,9 @@ router.post('/', authenticateToken, [
     res.status(201).json({ message: 'Project created successfully', project });
   } catch (error) {
     console.error('Error creating project:', error);
+    if (error.code === 'P2002') {
+      return res.status(409).json({ message: 'Project title must be unique' });
+    }
     res.status(500).json({ message: 'Failed to create project' });
   }
 });
@@ -80,11 +99,11 @@ router.put('/:id', authenticateToken, [
     if (/^https?:\/\//.test(value)) return true
     throw new Error('imageUrl must be a valid URL or /uploads path')
   }),
-  body('liveUrl').optional({ nullable: true, checkFalsy: true }).isURL(),
-  body('githubUrl').optional({ nullable: true, checkFalsy: true }).isURL(),
+  body('liveUrl').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeUrl(v)).isURL(),
+  body('githubUrl').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeUrl(v)).isURL(),
   body('techStack').optional().isLength({ min: 1, max: 500 }),
-  body('order').optional().isInt({ min: 0 }),
-  body('featured').optional().isBoolean()
+  body('order').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).toInt(),
+  body('featured').optional({ nullable: true, checkFalsy: true }).isBoolean().toBoolean()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -93,7 +112,7 @@ router.put('/:id', authenticateToken, [
     }
 
     const { id } = req.params;
-    const updateData = { ...req.body };
+    const updateData = stripEmptyStrings({ ...req.body });
     if (Array.isArray(updateData.techStack)) {
       updateData.techStack = updateData.techStack.join(', ')
     }

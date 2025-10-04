@@ -35,7 +35,7 @@ router.post('/', authenticateToken, [
     if (/^https?:\/\//.test(value)) return true
     throw new Error('imageUrl must be a valid URL or /uploads path')
   }),
-  body('order').optional().isInt({ min: 0 })
+  body('order').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).toInt()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -63,19 +63,27 @@ router.post('/', authenticateToken, [
 });
 
 // Update certificate (admin only)
+// Helper: remove keys that are empty strings to avoid invalid updates
+const stripEmptyStrings = (obj) => {
+  Object.keys(obj || {}).forEach((k) => {
+    if (obj[k] === '') delete obj[k]
+  })
+  return obj
+}
+
 router.put('/:id', authenticateToken, [
   body('title').optional().isLength({ min: 1, max: 200 }),
   body('issuer').optional().isLength({ min: 1, max: 200 }),
-  body('issueDate').optional().isISO8601(),
+  body('issueDate').optional({ nullable: true, checkFalsy: true }).isISO8601(),
   body('credentialId').optional().isLength({ max: 100 }),
-  body('credentialUrl').optional().isURL(),
+  body('credentialUrl').optional({ nullable: true, checkFalsy: true }).isURL(),
   body('imageUrl').optional().isString().isLength({ max: 1000 }).custom((value) => {
     if (!value) return true
     if (value.startsWith('/uploads/')) return true
     if (/^https?:\/\//.test(value)) return true
     throw new Error('imageUrl must be a valid URL or /uploads path')
   }),
-  body('order').optional().isInt({ min: 0 })
+  body('order').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).toInt()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -84,7 +92,7 @@ router.put('/:id', authenticateToken, [
     }
 
     const { id } = req.params;
-    const updateData = { ...req.body };
+    const updateData = stripEmptyStrings({ ...req.body });
     
     if (updateData.issueDate) {
       updateData.issueDate = new Date(updateData.issueDate);

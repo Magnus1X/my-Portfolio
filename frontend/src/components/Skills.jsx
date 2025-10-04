@@ -202,9 +202,9 @@ const Skills = () => {
               <div className="w-16 h-16 bg-accent-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Cpu size={32} className="text-accent-500" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-3">AI & ML</h3>
+              <h3 className="text-xl font-semibold text-white mb-3">Problem Solving & Coding</h3>
               <p className="text-gray-400">
-                Integrating artificial intelligence and machine learning into applications
+                Strong problem-solving abilities using Python, C++ using Data Structures and Algorithms.
               </p>
             </div>
           </div>
