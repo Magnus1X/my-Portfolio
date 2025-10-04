@@ -142,14 +142,13 @@ const Certificates = () => {
             </p>
           </div>
 
-          {/* Certificates Row (single-line with horizontal scroll) */}
+          {/* Certificates Grid (aligned with Projects section) */}
           {certificates.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="flex items-stretch space-x-6 pb-2">
+            <div className="space-y-8">
+              {/* <h3 className="text-2xl font-semibold text-white mb-8">🎓 Certifications</h3> */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {certificates.map((certificate) => (
-                  <div key={certificate.id} className="flex-shrink-0 w-80">
-                    <CertificateCard certificate={certificate} formatDate={formatDate} />
-                  </div>
+                  <CertificateCard key={certificate.id} certificate={certificate} formatDate={formatDate} />
                 ))}
               </div>
             </div>
@@ -172,26 +171,28 @@ const Certificates = () => {
 
 const CertificateCard = ({ certificate, formatDate }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const imageSrc = certificate.imageUrl ? getFileUrl(certificate.imageUrl) : ''
 
   return (
     <div className="certificate-card card group overflow-hidden perspective-1000 preserve-3d backface-hidden">
       {/* Certificate Image */}
       <div className="relative h-48 bg-gray-800 rounded-lg mb-4 overflow-hidden">
-        {certificate.imageUrl ? (
+        {imageSrc && !imageError ? (
           <img
-            src={certificate.imageUrl}
+            src={imageSrc}
             alt={certificate.title}
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(false)}
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-accent-500/20 to-blue-600/20 flex items-center justify-center">
             <div className="text-center">
-              <div className="w-16 h-16 bg-accent-500/30 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Award size={32} className="text-accent-500" />
+              <div className="w-20 h-20 bg-accent-500/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Award size={40} className="text-accent-500" />
               </div>
               <p className="text-gray-400 text-sm">Certificate</p>
             </div>

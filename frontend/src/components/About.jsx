@@ -64,10 +64,10 @@ const About = () => {
   }, [loading])
 
   const stats = [
-    { label: 'Projects Completed', value: '50+' },
-    { label: 'Technologies Mastered', value: '15+' },
-    { label: 'Years of Experience', value: '3+' },
-    { label: 'Happy Clients', value: '25+' },
+    { label: 'Projects Completed', value: '5+' },
+    { label: 'Technologies Learned', value: '10+' },
+    // { label: 'Years of Experience', value: '3+' },
+    // { label: 'Happy Clients', value: '25+' },
   ]
 
   if (loading) {
@@ -134,10 +134,10 @@ const About = () => {
                   </div>
                 )}
                 
-                <div className="flex items-center space-x-3 text-gray-300">
+                {/* <div className="flex items-center space-x-3 text-gray-300">
                   <Calendar size={20} className="text-accent-500" />
                   <span>Available for freelance work</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -209,7 +209,7 @@ const About = () => {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                {['React', 'Node.js', 'TypeScript', 'Python', 'MySQL', 'AWS'].map((tech, index) => (
+                {['React', 'Node.js', 'JavaScript', 'Python', 'MySQL', 'Express'].map((tech, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm border border-gray-700 hover:border-accent-500 transition-colors duration-300"

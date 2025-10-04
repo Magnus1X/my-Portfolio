@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ExternalLink, Github, Eye, Calendar } from 'lucide-react'
-import { projectsAPI } from '../utils/api'
+import { projectsAPI, getFileUrl } from '../utils/api'
 
 const Projects = () => {
   const [projects, setProjects] = useState([])
@@ -165,7 +165,6 @@ const Projects = () => {
           {/* Other Projects */}
           {otherProjects.length > 0 && (
             <div className="space-y-8">
-              <h3 className="text-2xl font-semibold text-white mb-8">💼 More Projects</h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {otherProjects.map((project) => (
                   <ProjectCard key={project.id} project={project} featured={false} />
@@ -183,6 +182,8 @@ const Projects = () => {
 
 const ProjectCard = ({ project, featured = false }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageError, setImageError] = useState(false)
+  const imageSrc = project.imageUrl ? getFileUrl(project.imageUrl) : ''
 
   return (
     <div className={`project-card card group overflow-hidden perspective-1000 preserve-3d backface-hidden ${
@@ -190,15 +191,15 @@ const ProjectCard = ({ project, featured = false }) => {
     }`}>
       {/* Project Image */}
       <div className="relative h-48 bg-gray-800 rounded-lg mb-4 overflow-hidden">
-        {project.imageUrl ? (
+        {imageSrc && !imageError ? (
           <img
-            src={project.imageUrl}
+            src={imageSrc}
             alt={project.title}
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${
               imageLoaded ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={() => setImageLoaded(true)}
-            onError={() => setImageLoaded(false)}
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-accent-500/20 to-blue-600/20 flex items-center justify-center">

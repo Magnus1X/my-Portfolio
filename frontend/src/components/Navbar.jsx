@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X, Code, User, Briefcase, Award, Mail, Home } from 'lucide-react'
+import { scrollToSection } from '../utils/scroll'
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -33,25 +34,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      // Calculate an offset to account for the floating navbar and scroll margins
-      const navEl = document.querySelector('nav')
-      const baseOffset = navEl ? navEl.offsetHeight : 80
-      const scrollMargin = 24 // matches scroll-mt-24 used on sections
-      const offset = baseOffset + scrollMargin
-
-      // Prefer Lenis smooth scroll if available
-      if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-        window.lenis.scrollTo(element, { offset: -offset, duration: 1 })
-      } else {
-        const y = element.getBoundingClientRect().top + window.scrollY - offset
-        window.scrollTo({ top: y, behavior: 'smooth' })
-      }
-    }
-    setIsOpen(false)
-  }
+  
 
   return (
     <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-5xl px-4">
@@ -73,7 +56,7 @@ const Navbar = () => {
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  onClick={(e) => { e.preventDefault(); scrollToSection(item.id) }}
+                  onClick={(e) => { e.preventDefault(); scrollToSection(item.id); setIsOpen(false) }}
                   className={`flex items-center space-x-2 px-5 py-2.5 rounded-full transition-all duration-300 ${
                     activeSection === item.id
                       ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white shadow-md'
@@ -116,7 +99,7 @@ const Navbar = () => {
                   <a
                     key={item.id}
                     href={`#${item.id}`}
-                    onClick={(e) => { e.preventDefault(); scrollToSection(item.id) }}
+                    onClick={(e) => { e.preventDefault(); scrollToSection(item.id); setIsOpen(false) }}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                       activeSection === item.id
                         ? 'bg-accent-600 text-white'

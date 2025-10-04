@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { scrollToSection } from '../utils/scroll'
 import { Download, Github, Linkedin, Mail, Code2, Trophy } from 'lucide-react'
 import { getFileUrl } from '../utils/api'
 import { userAPI } from '../utils/api'
@@ -141,13 +142,14 @@ const Hero = () => {
               </a>
             )}
             
-            <button
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            <a
+              href="/#contact"
+              onClick={(e) => { e.preventDefault(); scrollToSection('contact') }}
               className="btn-secondary flex items-center space-x-2 group"
             >
               <Mail size={20} />
               <span>Get In Touch</span>
-            </button>
+            </a>
           </div>
 
           {/* Social Links */}

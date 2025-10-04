@@ -151,7 +151,7 @@ const Contact = () => {
                       {userInfo?.email || 'contact@sauravkumar.dev'}
                     </a>
                     {/* Competitive programming/social links beside email */}
-                    <div className="flex items-center space-x-4 mt-3">
+                    {/* <div className="flex items-center space-x-4 mt-3">
                       {userInfo?.codeforces && (
                         <a
                           href={`https://codeforces.com/profile/${userInfo.codeforces}`}
@@ -174,7 +174,7 @@ const Contact = () => {
                           <Trophy size={20} />
                         </a>
                       )}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
 

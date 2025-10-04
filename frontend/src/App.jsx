@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 
 // Components
@@ -30,6 +30,7 @@ import { addSkipLink } from './utils/accessibility'
 function App() {
   const { lenis } = useLenis()
   useScrollTrigger()
+  const location = useLocation()
 
   // SEO for main portfolio page
   useSEO({
@@ -41,6 +42,11 @@ function App() {
   useEffect(() => {
     // Add skip link for accessibility
     addSkipLink()
+
+    // Disable browser scroll restoration so we control initial scroll
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
 
     // Initialize GSAP ScrollTrigger
     const { gsap } = window
@@ -102,6 +108,54 @@ function App() {
       clearTimeout(safetyTimeout)
     }
   }, [])
+
+  // Global hash-based smooth scrolling with navbar offset
+  useEffect(() => {
+    const scrollWithOffset = (hashOrId) => {
+      if (!hashOrId) return
+      const id = typeof hashOrId === 'string' && hashOrId.startsWith('#') ? hashOrId.slice(1) : hashOrId
+      const element = document.getElementById(id)
+      if (!element) return
+
+      const navEl = document.querySelector('nav')
+      const baseOffset = navEl ? navEl.offsetHeight : 80
+      const scrollMargin = 24 // matches scroll-mt-24 used on sections
+      const offset = baseOffset + scrollMargin
+
+      if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+        window.lenis.scrollTo(element, { offset: -offset, duration: 1 })
+      } else {
+        const y = element.getBoundingClientRect().top + window.scrollY - offset
+        window.scrollTo({ top: y, behavior: 'smooth' })
+      }
+    }
+
+    const handleHashScroll = () => scrollWithOffset(window.location.hash)
+
+    // Detect browser refresh and force scroll to Home (hero)
+    const navEntry = performance.getEntriesByType('navigation')[0]
+    const isReload = navEntry && navEntry.type === 'reload'
+    const isAdminRoute = location.pathname.startsWith('/admin')
+
+    // Scroll on initial load (after render)
+    setTimeout(() => {
+      if (isReload && !isAdminRoute) {
+        // Ensure we are on home route and clear any hash
+        const newUrl = '/' + (window.location.search || '')
+        window.history.replaceState(null, '', newUrl)
+
+        // Ensure we start at top and then apply smooth scroll to hero
+        window.scrollTo({ top: 0, behavior: 'auto' })
+        requestAnimationFrame(() => scrollWithOffset('hero'))
+      } else if (window.location.hash) {
+        handleHashScroll()
+      }
+    }, 0)
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashScroll)
+    return () => window.removeEventListener('hashchange', handleHashScroll)
+  }, [lenis, location.pathname])
 
   return (
     <div className="App">

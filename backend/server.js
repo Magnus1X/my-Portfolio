@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -49,8 +50,36 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Static files (serve uploads with permissive CORP/CORS headers in dev)
+const uploadsPath = path.join(__dirname, 'uploads')
+
+// Graceful fallback for missing upload files to avoid ORB console errors
+// Returns a 1x1 transparent PNG when the requested file is not found
+const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBCeJtK9EAAAAASUVORK5CYII='
+app.get('/uploads/:fileName', (req, res, next) => {
+  const filePath = path.join(uploadsPath, req.params.fileName)
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File not found: serve transparent PNG with permissive headers in dev
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+      if (process.env.NODE_ENV !== 'production') {
+        res.setHeader('Access-Control-Allow-Origin', '*')
+      }
+      res.type('png')
+      return res.status(200).send(Buffer.from(TRANSPARENT_PNG_BASE64, 'base64'))
+    }
+    next()
+  })
+})
+app.use('/uploads', express.static(uploadsPath, {
+  setHeaders: (res) => {
+    // Allow embedding images cross-origin in development
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+    if (process.env.NODE_ENV !== 'production') {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+    }
+  }
+}))
 
 // Routes
 app.use('/api/auth', authRoutes);

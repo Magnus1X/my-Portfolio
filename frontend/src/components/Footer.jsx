@@ -28,9 +28,7 @@ const Footer = () => {
     return links
   })()
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  // Using hash link navigation handled globally in App.jsx
 
   return (
     <footer className="bg-gradient-to-r from-gray-700 to-gray-900 text-white py-12">
@@ -58,41 +56,25 @@ const Footer = () => {
             <h4 className="text-lg font-semibold text-white">Quick Links</h4>
             <nav className="flex flex-col space-y-2">
               <a 
-                href="#hero" 
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                href="/#hero"
                 className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm"
               >
                 Home
               </a>
               <a 
-                href="#about" 
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                href="/#about"
                 className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm"
               >
                 About
               </a>
               <a 
-                href="#projects" 
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                href="/#projects"
                 className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm"
               >
                 Projects
               </a>
               <a 
-                href="#contact" 
-                onClick={(e) => {
-                  e.preventDefault()
-                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-                }}
+                href="/#contact"
                 className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm"
               >
                 Contact
@@ -122,7 +104,7 @@ const Footer = () => {
             </div>
             <div className="text-sm text-gray-400">
               <p>📧 {userInfo?.email || 'contact@sauravkumar.dev'}</p>
-              <p>📍 Available for freelance work</p>
+              {/* <p>📍 Available for freelance work</p> */}
             </div>
           </div>
         </div>
@@ -139,15 +121,15 @@ const Footer = () => {
             </div>
             
             <div className="flex items-center space-x-6">
-              <button
-                onClick={scrollToTop}
+              <a
+                href="/#hero"
                 className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm flex items-center space-x-2"
               >
                 <span>Back to top</span>
                 <div className="w-6 h-6 border border-current rounded-full flex items-center justify-center">
                   <span className="text-xs">↑</span>
                 </div>
-              </button>
+              </a>
               
               <a
                 href="/admin"
