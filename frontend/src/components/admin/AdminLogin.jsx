@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Eye, EyeOff, Lock, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { authAPI } from '../../utils/api'
 import { toast } from 'react-hot-toast'
@@ -143,12 +143,12 @@ const AdminLogin = () => {
 
         {/* Back to Portfolio */}
         <div className="text-center mt-6">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="text-gray-400 hover:text-accent-500 transition-colors duration-300 text-sm"
           >
             ← Back to Portfolio
-          </a>
+          </Link>
         </div>
 
         {/* Security Notice */}

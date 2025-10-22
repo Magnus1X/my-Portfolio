@@ -84,6 +84,7 @@ export const messagesAPI = {
   getAll: () => api.get('/messages'),
   markRead: (id, data) => api.patch(`/messages/${id}/read`, data),
   reply: (id, data) => api.post(`/messages/${id}/reply`, data),
+  delete: (id) => api.delete(`/messages/${id}`),
 }
 
 // Upload API

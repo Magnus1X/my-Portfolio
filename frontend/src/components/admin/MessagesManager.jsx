@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Mail, Eye, Reply, CheckCircle, X, Loader2 } from 'lucide-react'
+import { Mail, Eye, Reply, CheckCircle, X, Loader2, Trash2 } from 'lucide-react'
 import { messagesAPI } from '../../utils/api'
 import { toast } from 'react-hot-toast'
 
@@ -59,6 +59,18 @@ const MessagesManager = () => {
     }
   }
 
+  const deleteMessage = async (id) => {
+    if (!confirm('Are you sure you want to delete this message?')) return
+    try {
+      await messagesAPI.delete(id)
+      setMessages((prev) => prev.filter(m => m.id !== id))
+      toast.success('Message deleted')
+    } catch (err) {
+      console.error('Error deleting message', err)
+      toast.error('Failed to delete message')
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -109,6 +121,13 @@ const MessagesManager = () => {
                   </button>
                   <button onClick={() => openReply(m)} className="btn-primary">
                     <Reply size={16} className="mr-2" /> Reply
+                  </button>
+                  <button
+                    onClick={() => deleteMessage(m.id)}
+                    className="text-gray-400 hover:text-red-500 transition-colors duration-300"
+                    aria-label="Delete message"
+                  >
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>

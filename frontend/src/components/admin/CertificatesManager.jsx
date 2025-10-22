@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Save, X, Award, ExternalLink, Image as ImageIcon } from 'lucide-react'
-import { certificatesAPI, uploadAPI } from '../../utils/api'
+import { Plus, Edit, Trash2, Save, X, Calendar, Award, Image as ImageIcon } from 'lucide-react'
+import { certificatesAPI, uploadAPI, getFileUrl } from '../../utils/api'
 import { toast } from 'react-hot-toast'
 
 const CertificatesManager = () => {
@@ -71,7 +71,7 @@ const CertificatesManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!formData.title.trim()) {
       toast.error('Certificate title is required')
       return
@@ -82,7 +82,7 @@ const CertificatesManager = () => {
       return
     }
 
-    if (!formData.issueDate) {
+    if (!formData.issueDate.trim()) {
       toast.error('Issue date is required')
       return
     }
@@ -95,7 +95,7 @@ const CertificatesManager = () => {
         await certificatesAPI.create(formData)
         toast.success('Certificate created successfully!')
       }
-      
+
       fetchCertificates()
       resetForm()
     } catch (error) {
@@ -109,11 +109,11 @@ const CertificatesManager = () => {
     setFormData({
       title: certificate.title,
       issuer: certificate.issuer,
-      issueDate: certificate.issueDate ? certificate.issueDate.split('T')[0] : '',
+      issueDate: certificate.issueDate?.slice(0, 10) || '',
       credentialId: certificate.credentialId || '',
       credentialUrl: certificate.credentialUrl || '',
       imageUrl: certificate.imageUrl || '',
-      order: certificate.order
+      order: certificate.order || 0
     })
     setShowForm(true)
   }
@@ -145,19 +145,6 @@ const CertificatesManager = () => {
     setShowForm(false)
   }
 
-  const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      })
-    } catch (error) {
-      return dateString
-    }
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -175,7 +162,7 @@ const CertificatesManager = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Certificates Management</h2>
-          <p className="text-gray-400">Manage your professional certificates and achievements</p>
+          <p className="text-gray-400">Manage your achievements and certifications</p>
         </div>
         <button
           onClick={() => setShowForm(true)}
@@ -215,14 +202,14 @@ const CertificatesManager = () => {
                   value={formData.title}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
-                  placeholder="Full Stack Web Development"
+                  placeholder="AWS Certified Solutions Architect"
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="issuer" className="block text-sm font-medium text-white mb-2">
-                  Issuing Organization *
+                  Issuer *
                 </label>
                 <input
                   type="text"
@@ -231,13 +218,14 @@ const CertificatesManager = () => {
                   value={formData.issuer}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
-                  placeholder="FreeCodeCamp"
+                  placeholder="Amazon Web Services"
                   required
                 />
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Issue Date and Credential */}
+            <div className="grid md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="issueDate" className="block text-sm font-medium text-white mb-2">
                   Issue Date *
@@ -248,30 +236,11 @@ const CertificatesManager = () => {
                   name="issueDate"
                   value={formData.issueDate}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
                   required
                 />
               </div>
 
-              <div>
-                <label htmlFor="order" className="block text-sm font-medium text-white mb-2">
-                  Display Order
-                </label>
-                <input
-                  type="number"
-                  id="order"
-                  name="order"
-                  value={formData.order}
-                  onChange={handleInputChange}
-                  min="0"
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            {/* Credential Information */}
-            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="credentialId" className="block text-sm font-medium text-white mb-2">
                   Credential ID
@@ -283,13 +252,13 @@ const CertificatesManager = () => {
                   value={formData.credentialId}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
-                  placeholder="FCC-FSWD-2023"
+                  placeholder="ABC-12345"
                 />
               </div>
 
               <div>
                 <label htmlFor="credentialUrl" className="block text-sm font-medium text-white mb-2">
-                  Verification URL
+                  Credential URL
                 </label>
                 <input
                   type="url"
@@ -298,7 +267,7 @@ const CertificatesManager = () => {
                   value={formData.credentialUrl}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors duration-300"
-                  placeholder="https://freecodecamp.org/certification/..."
+                  placeholder="https://verify.example.com/certificate/ABC-12345"
                 />
               </div>
             </div>
@@ -312,14 +281,14 @@ const CertificatesManager = () => {
                 {formData.imageUrl && (
                   <div className="flex items-center space-x-4">
                     <img
-                      src={formData.imageUrl}
+                      src={getFileUrl(formData.imageUrl)}
                       alt="Certificate preview"
                       className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
                     />
                     <div>
                       <p className="text-sm text-gray-400">Current image</p>
                       <a
-                        href={formData.imageUrl}
+                        href={getFileUrl(formData.imageUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-accent-500 hover:text-accent-400"
@@ -329,7 +298,7 @@ const CertificatesManager = () => {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="relative">
                   <input
                     type="file"
@@ -337,10 +306,10 @@ const CertificatesManager = () => {
                     onChange={handleImageUpload}
                     disabled={uploadingImage}
                     className="hidden"
-                    id="image-upload"
+                    id="certificate-image-upload"
                   />
                   <label
-                    htmlFor="image-upload"
+                    htmlFor="certificate-image-upload"
                     className={`flex items-center justify-center space-x-2 px-4 py-3 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer transition-colors duration-300 hover:border-accent-500 hover:bg-accent-500/10 ${
                       uploadingImage ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
@@ -375,80 +344,15 @@ const CertificatesManager = () => {
       )}
 
       {/* Certificates List */}
-      <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-          <Award size={20} className="text-accent-500" />
-          <span>Certificates ({certificates.length})</span>
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {certificates.map((certificate) => (
-            <div key={certificate.id} className="card p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h4 className="text-white font-semibold mb-1">{certificate.title}</h4>
-                  <p className="text-sm text-gray-400">{certificate.issuer}</p>
-                </div>
-                <div className="flex space-x-2 ml-4">
-                  <button
-                    onClick={() => handleEdit(certificate)}
-                    className="text-gray-400 hover:text-accent-500 transition-colors duration-300"
-                    aria-label="Edit certificate"
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(certificate.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors duration-300"
-                    aria-label="Delete certificate"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-              
-              {certificate.imageUrl && (
-                <div className="mb-3">
-                  <img
-                    src={certificate.imageUrl}
-                    alt={certificate.title}
-                    className="w-full h-32 object-cover rounded-lg border border-gray-700"
-                  />
-                </div>
-              )}
-              
-              <div className="space-y-2 text-sm">
-                <p className="text-gray-400">
-                  <span className="font-medium">Issued:</span> {formatDate(certificate.issueDate)}
-                </p>
-                
-                {certificate.credentialId && (
-                  <p className="text-gray-400">
-                    <span className="font-medium">ID:</span> {certificate.credentialId}
-                  </p>
-                )}
-                
-                <p className="text-gray-400">
-                  <span className="font-medium">Order:</span> {certificate.order}
-                </p>
-              </div>
-              
-              {certificate.credentialUrl && (
-                <div className="mt-3 pt-3 border-t border-gray-700">
-                  <a
-                    href={certificate.credentialUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-1 text-accent-500 hover:text-accent-400 transition-colors duration-300 text-sm"
-                  >
-                    <ExternalLink size={14} />
-                    <span>Verify Certificate</span>
-                  </a>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {certificates.map((certificate) => (
+          <CertificateCard
+            key={certificate.id}
+            certificate={certificate}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        ))}
       </div>
 
       {certificates.length === 0 && (
@@ -457,7 +361,7 @@ const CertificatesManager = () => {
             <Award size={48} className="text-gray-600" />
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">No Certificates Added</h3>
-          <p className="text-gray-400 mb-6">Start building your credentials showcase by adding your first certificate.</p>
+          <p className="text-gray-400 mb-6">Showcase your achievements by adding your first certificate.</p>
           <button
             onClick={() => setShowForm(true)}
             className="btn-primary flex items-center space-x-2 mx-auto"
@@ -467,6 +371,61 @@ const CertificatesManager = () => {
           </button>
         </div>
       )}
+    </div>
+  )
+}
+
+const CertificateCard = ({ certificate, onEdit, onDelete }) => {
+  return (
+    <div className="card p-4">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1">
+          <h4 className="text-white font-semibold mb-1">{certificate.title}</h4>
+          <p className="text-gray-400 text-sm">{certificate.issuer}</p>
+        </div>
+        <div className="flex space-x-2 ml-4">
+          <button
+            onClick={() => onEdit(certificate)}
+            className="text-gray-400 hover:text-accent-500 transition-colors duration-300"
+            aria-label="Edit certificate"
+          >
+            <Edit size={16} />
+          </button>
+          <button
+            onClick={() => onDelete(certificate.id)}
+            className="text-gray-400 hover:text-red-500 transition-colors duration-300"
+            aria-label="Delete certificate"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      {certificate.imageUrl && (
+        <div className="mb-3">
+          <img
+            src={getFileUrl(certificate.imageUrl)}
+            alt={certificate.title}
+            className="w-full h-32 object-cover rounded-lg border border-gray-700"
+          />
+        </div>
+      )}
+
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-gray-400">
+          {certificate.issueDate ? new Date(certificate.issueDate).toLocaleDateString() : 'No date'}
+        </span>
+        {certificate.credentialUrl && (
+          <a
+            href={certificate.credentialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent-500 hover:text-accent-400 transition-colors duration-300"
+          >
+            Verify
+          </a>
+        )}
+      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Save, X, ExternalLink, Github, Eye, Image as ImageIcon } from 'lucide-react'
-import { projectsAPI, uploadAPI } from '../../utils/api'
+import { projectsAPI, uploadAPI, getFileUrl } from '../../utils/api'
 import { toast } from 'react-hot-toast'
 
 const ProjectsManager = () => {
@@ -318,14 +318,14 @@ const ProjectsManager = () => {
                 {formData.imageUrl && (
                   <div className="flex items-center space-x-4">
                     <img
-                      src={formData.imageUrl}
+                      src={getFileUrl(formData.imageUrl)}
                       alt="Project preview"
                       className="w-24 h-24 rounded-lg object-cover border-2 border-gray-700"
                     />
                     <div>
                       <p className="text-sm text-gray-400">Current image</p>
                       <a
-                        href={formData.imageUrl}
+                        href={getFileUrl(formData.imageUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-accent-500 hover:text-accent-400"
@@ -480,7 +480,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
       {project.imageUrl && (
         <div className="mb-3">
           <img
-            src={project.imageUrl}
+            src={getFileUrl(project.imageUrl)}
             alt={project.title}
             className="w-full h-32 object-cover rounded-lg border border-gray-700"
           />

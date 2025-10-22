@@ -10,8 +10,31 @@ const isEmailConfigured = () => {
   return Boolean(
     process.env.EMAIL_USER &&
     process.env.EMAIL_PASS &&
-    process.env.EMAIL_FROM
+    (process.env.EMAIL_FROM || process.env.EMAIL_USER)
   )
+}
+
+// Prefer SMTP host/port from env when available
+const smtpConfigFromEnv = () => {
+  const host = process.env.EMAIL_HOST
+  const port = Number(process.env.EMAIL_PORT)
+  if (host && port) {
+    const secure = port === 465
+    return {
+      host,
+      port,
+      secure,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+        ciphers: 'TLSv1.2'
+      }
+    }
+  }
+  return null
 }
 
 const createTransporter = async () => {
@@ -19,24 +42,28 @@ const createTransporter = async () => {
     return nodemailer.createTransport({ jsonTransport: true })
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      rejectUnauthorized: false,
-      ciphers: 'TLSv1.2'
-    }
-  })
+  const smtp = smtpConfigFromEnv()
+  const transporter = smtp
+    ? nodemailer.createTransport(smtp)
+    : nodemailer.createTransport({
+        service: 'gmail',
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+        tls: {
+          rejectUnauthorized: false,
+          ciphers: 'TLSv1.2'
+        }
+      })
 
   try {
     await transporter.verify()
     return transporter
   } catch (err) {
     if (process.env.NODE_ENV !== 'production') {
+      console.warn('Email transport verification failed, using dev JSON transport:', err.message)
       return nodemailer.createTransport({ jsonTransport: true })
     }
     throw err
@@ -102,10 +129,11 @@ router.post('/:id/reply', authenticateToken, [
     }
 
     const transporter = await createTransporter();
+    const fromAddress = `${process.env.EMAIL_FROM || process.env.EMAIL_USER}`
     const mailOptions = {
-      from: `Saurav Kumar <${process.env.EMAIL_FROM}>`,
+      from: `Saurav Kumar <${fromAddress}>`,
       to: message.email,
-      replyTo: process.env.EMAIL_FROM,
+      replyTo: fromAddress,
       subject: subject || `Re: ${message.subject || 'Your message'}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -123,6 +151,7 @@ router.post('/:id/reply', authenticateToken, [
       await transporter.sendMail(mailOptions)
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {
+        console.warn('Reply email send failed, simulating in development:', err.message)
         const devTransporter = nodemailer.createTransport({ jsonTransport: true })
         await devTransporter.sendMail(mailOptions)
         simulated = true
@@ -136,10 +165,34 @@ router.post('/:id/reply', authenticateToken, [
       data: { replied: true }
     })
 
-    res.json({ message: 'Reply sent', item: updated, hint: simulated ? 'Email simulated in development' : undefined })
+    res.json({ message: 'Reply sent', item: updated, hint: simulated ? 'Email simulated in development. Set EMAIL_USER/EMAIL_PASS/EMAIL_FROM or use EMAIL_HOST/EMAIL_PORT.' : undefined })
   } catch (error) {
     console.error('Error replying to message:', error)
     res.status(500).json({ message: 'Failed to send reply' })
+  }
+})
+
+router.delete('/:id', authenticateToken, [
+  param('id').isString()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+    }
+
+    const id = req.params.id
+
+    const existing = await prisma.message.findUnique({ where: { id } })
+    if (!existing) {
+      return res.status(404).json({ message: 'Message not found' })
+    }
+
+    await prisma.message.delete({ where: { id } })
+    return res.json({ message: 'Message deleted' })
+  } catch (error) {
+    console.error('Error deleting message:', error)
+    return res.status(500).json({ message: 'Failed to delete message' })
   }
 })
 
