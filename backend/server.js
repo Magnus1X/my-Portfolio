@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL || 'https://your-portfolio.onrender.com']
+    ? [process.env.FRONTEND_URL || 'https://my-portfolio-frontend-321q.onrender.com']
     : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:3001'],
   credentials: true
 }));
