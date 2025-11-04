@@ -120,7 +120,8 @@ my-Portfolio/
 
 ### Prerequisites
 - **Node.js** (v18 or higher)
-- **MySQL** database
+- **MongoDB Atlas** account
+- **Cloudinary** account
 - **Git**
 
 ### 1. Clone the Repository
@@ -138,10 +139,10 @@ This will install dependencies for both frontend and backend.
 
 ### 3. Database Setup
 
-#### Create MySQL Database
-```sql
-CREATE DATABASE portfolio_db;
-```
+#### Create MongoDB Atlas Database
+1. Create MongoDB Atlas cluster
+2. Create database user
+3. Get connection string
 
 #### Configure Environment Variables
 Copy the example environment file and update with your values:
@@ -155,7 +156,7 @@ Edit `.env` with your configuration:
 
 ```env
 # Database
-DATABASE_URL="mysql://username:password@localhost:3306/portfolio_db"
+DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/portfolio_db"
 
 # JWT
 JWT_SECRET="your-super-secret-jwt-key-here"
@@ -178,14 +179,18 @@ NODE_ENV="development"
 
 # File Upload
 MAX_FILE_SIZE=5242880
-UPLOAD_PATH="./uploads"
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
 ```
 
 #### Initialize Database
 ```bash
 cd backend
-npx prisma generate
-npx prisma db push
+npm run db:generate
+npm run db:push
 npm run db:seed
 ```
 

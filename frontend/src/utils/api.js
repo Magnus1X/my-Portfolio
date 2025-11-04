@@ -122,7 +122,8 @@ export const uploadAPI = {
 // Helper to convert relative file URLs (e.g. /uploads/xyz.pdf) to absolute
 export const getFileUrl = (url) => {
   if (!url) return url
-  if (url.startsWith('/uploads')) return `${API_ORIGIN}${url}`
+  if (url.startsWith('http')) return url // Cloudinary URLs
+  if (url.startsWith('/uploads')) return `${API_ORIGIN}${url}` // Legacy local files
   return url
 }
 

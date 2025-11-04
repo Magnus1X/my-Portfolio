@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
-const fs = require('fs');
+const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
+
+const prisma = new PrismaClient();
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
@@ -41,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://yourdomain.com']
+    ? [process.env.FRONTEND_URL || 'https://your-portfolio.onrender.com']
     : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:3001'],
   credentials: true
 }));
@@ -50,36 +51,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static files (serve uploads with permissive CORP/CORS headers in dev)
-const uploadsPath = path.join(__dirname, 'uploads')
 
-// Graceful fallback for missing upload files to avoid ORB console errors
-// Returns a 1x1 transparent PNG when the requested file is not found
-const TRANSPARENT_PNG_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMBCeJtK9EAAAAASUVORK5CYII='
-app.get('/uploads/:fileName', (req, res, next) => {
-  const filePath = path.join(uploadsPath, req.params.fileName)
-  fs.access(filePath, fs.constants.F_OK, (err) => {
-    if (err) {
-      // File not found: serve transparent PNG with permissive headers in dev
-      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-      if (process.env.NODE_ENV !== 'production') {
-        res.setHeader('Access-Control-Allow-Origin', '*')
-      }
-      res.type('png')
-      return res.status(200).send(Buffer.from(TRANSPARENT_PNG_BASE64, 'base64'))
-    }
-    next()
-  })
-})
-app.use('/uploads', express.static(uploadsPath, {
-  setHeaders: (res) => {
-    // Allow embedding images cross-origin in development
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-    if (process.env.NODE_ENV !== 'production') {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-    }
-  }
-}))
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -110,7 +82,29 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Database connection with retry
+  const connectWithRetry = async (retries = 3) => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        await prisma.$connect();
+        console.log('🍃 Database connected successfully');
+        return;
+      } catch (error) {
+        console.error(`❌ Database connection attempt ${i + 1} failed:`, error.message);
+        if (i === retries - 1) {
+          console.error('❌ All database connection attempts failed');
+          console.error('Please check your MongoDB Atlas connection string and network connectivity');
+        } else {
+          console.log(`⏳ Retrying in 2 seconds...`);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
+    }
+  };
+  
+  connectWithRetry();
 });

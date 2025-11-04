@@ -1,20 +1,43 @@
 const express = require('express');
-const { uploadSingle } = require('../middleware/upload');
+const multer = require('multer');
+const cloudinary = require('../config/cloudinary');
 const { authenticateToken } = require('../middleware/auth');
 const prisma = require('../config/database');
 
 const router = express.Router();
 
-// Upload profile photo (admin only)
-router.post('/photo', authenticateToken, uploadSingle('photo'), async (req, res) => {
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+const uploadToCloudinary = (buffer, folder, resourceType = 'image') => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      { 
+        folder, 
+        resource_type: resourceType,
+        transformation: resourceType === 'image' ? [
+          { width: 800, height: 800, crop: 'limit' },
+          { quality: 'auto' }
+        ] : undefined
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    ).end(buffer);
+  });
+};
+
+router.post('/photo', authenticateToken, upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
-
-    // Update user profile photo in database
+    const result = await uploadToCloudinary(req.file.buffer, 'portfolio/photos');
+    
     let user = await prisma.user.findFirst();
     
     if (!user) {
@@ -22,29 +45,29 @@ router.post('/photo', authenticateToken, uploadSingle('photo'), async (req, res)
         data: {
           email: process.env.ADMIN_EMAIL,
           name: 'Saurav Kumar',
-          profilePhoto: fileUrl
+          profilePhoto: result.secure_url
         }
       });
     } else {
       user = await prisma.user.update({
         where: { id: user.id },
-        data: { profilePhoto: fileUrl }
+        data: { profilePhoto: result.secure_url }
       });
     }
 
+
     res.json({ 
       message: 'Profile photo uploaded successfully', 
-      url: fileUrl,
-      user: { profilePhoto: fileUrl }
+      url: result.secure_url,
+      user: { profilePhoto: result.secure_url }
     });
   } catch (error) {
     console.error('Error uploading profile photo:', error);
-    res.status(500).json({ message: 'Failed to upload profile photo' });
+    res.status(500).json({ message: 'Failed to upload profile photo', error: error.message });
   }
 });
 
-// Upload CV (admin only)
-router.post('/cv', authenticateToken, uploadSingle('cv'), async (req, res) => {
+router.post('/cv', authenticateToken, upload.single('cv'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
@@ -54,9 +77,8 @@ router.post('/cv', authenticateToken, uploadSingle('cv'), async (req, res) => {
       return res.status(400).json({ message: 'Only PDF files are allowed for CV' });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
-
-    // Update user CV URL in database
+    const result = await uploadToCloudinary(req.file.buffer, 'portfolio/cv', 'raw');
+    
     let user = await prisma.user.findFirst();
     
     if (!user) {
@@ -64,20 +86,20 @@ router.post('/cv', authenticateToken, uploadSingle('cv'), async (req, res) => {
         data: {
           email: process.env.ADMIN_EMAIL,
           name: 'Saurav Kumar',
-          cvUrl: fileUrl
+          cvUrl: result.secure_url
         }
       });
     } else {
       user = await prisma.user.update({
         where: { id: user.id },
-        data: { cvUrl: fileUrl }
+        data: { cvUrl: result.secure_url }
       });
     }
 
     res.json({ 
       message: 'CV uploaded successfully', 
-      url: fileUrl,
-      user: { cvUrl: fileUrl }
+      url: result.secure_url,
+      user: { cvUrl: result.secure_url }
     });
   } catch (error) {
     console.error('Error uploading CV:', error);
@@ -85,18 +107,17 @@ router.post('/cv', authenticateToken, uploadSingle('cv'), async (req, res) => {
   }
 });
 
-// Upload project image (admin only)
-router.post('/project-image', authenticateToken, uploadSingle('image'), async (req, res) => {
+router.post('/project-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const result = await uploadToCloudinary(req.file.buffer, 'portfolio/projects');
 
     res.json({ 
       message: 'Project image uploaded successfully', 
-      url: fileUrl
+      url: result.secure_url
     });
   } catch (error) {
     console.error('Error uploading project image:', error);
@@ -104,18 +125,17 @@ router.post('/project-image', authenticateToken, uploadSingle('image'), async (r
   }
 });
 
-// Upload certificate image (admin only)
-router.post('/certificate-image', authenticateToken, uploadSingle('image'), async (req, res) => {
+router.post('/certificate-image', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const fileUrl = `/uploads/${req.file.filename}`;
+    const result = await uploadToCloudinary(req.file.buffer, 'portfolio/certificates');
 
     res.json({ 
       message: 'Certificate image uploaded successfully', 
-      url: fileUrl
+      url: result.secure_url
     });
   } catch (error) {
     console.error('Error uploading certificate image:', error);

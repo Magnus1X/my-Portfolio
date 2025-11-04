@@ -69,16 +69,17 @@ router.put('/', authenticateToken, [
   body('tagline').optional().isLength({ max: 200 }),
   body('location').optional().isLength({ max: 100 }),
   body('summary').optional().isLength({ max: 1000 }),
-  body('linkedin').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeSocialUrl('linkedin', v)).isURL(),
-  body('github').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeSocialUrl('github', v)).isURL(),
-  body('twitter').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeSocialUrl('twitter', v)).isURL(),
-  body('instagram').optional({ nullable: true, checkFalsy: true }).customSanitizer((v) => normalizeSocialUrl('instagram', v)).isURL(),
-  body('codeforces').optional().isString().isLength({ max: 100 }),
-  body('leetcode').optional().isString().isLength({ max: 100 })
+  body('linkedin').optional().customSanitizer((v) => v ? normalizeSocialUrl('linkedin', v) : ''),
+  body('github').optional().customSanitizer((v) => v ? normalizeSocialUrl('github', v) : ''),
+  body('twitter').optional().customSanitizer((v) => v ? normalizeSocialUrl('twitter', v) : ''),
+  body('instagram').optional().customSanitizer((v) => v ? normalizeSocialUrl('instagram', v) : ''),
+  body('codeforces').optional({ nullable: true }).isString(),
+  body('leetcode').optional({ nullable: true }).isString()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Validation errors:', errors.array());
       return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
     }
 
