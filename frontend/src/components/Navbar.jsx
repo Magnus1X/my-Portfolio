@@ -53,10 +53,10 @@ const Navbar = () => {
             {navItems.map((item) => {
               const Icon = item.icon
               return (
-                <a
+                <button
+                  type="button"
                   key={item.id}
-                  href={`#${item.id}`}
-                  onClick={(e) => { e.preventDefault(); scrollToSection(item.id); setIsOpen(false) }}
+                  onClick={() => { scrollToSection(item.id); setIsOpen(false) }}
                   className={`flex items-center space-x-2 px-5 py-2.5 rounded-full transition-all duration-300 ${
                     activeSection === item.id
                       ? 'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white shadow-md'
@@ -65,7 +65,7 @@ const Navbar = () => {
                 >
                   <Icon size={16} />
                   <span className="text-sm font-medium">{item.label}</span>
-                </a>
+                </button>
               )
             })}
           </div>
@@ -96,10 +96,10 @@ const Navbar = () => {
               {navItems.map((item) => {
                 const Icon = item.icon
                 return (
-                  <a
+                  <button
+                    type="button"
                     key={item.id}
-                    href={`#${item.id}`}
-                    onClick={(e) => { e.preventDefault(); scrollToSection(item.id); setIsOpen(false) }}
+                    onClick={() => { scrollToSection(item.id); setIsOpen(false) }}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                       activeSection === item.id
                         ? 'bg-accent-600 text-white'
@@ -108,7 +108,7 @@ const Navbar = () => {
                   >
                     <Icon size={18} />
                     <span className="font-medium">{item.label}</span>
-                  </a>
+                  </button>
                 )
               })}
               <Link
