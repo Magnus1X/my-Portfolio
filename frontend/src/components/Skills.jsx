@@ -16,44 +16,44 @@ const Skills = () => {
       } catch (error) {
         console.error('Error fetching skills:', error)
         // Set fallback skills
-        setSkills([
-          {
-            id: '1',
-            name: 'React',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.765c.688 0 1.25-.562 1.25-1.25s-.562-1.25-1.25-1.25-1.25.562-1.25 1.25.562 1.25 1.25 1.25zm0-6.5c3.516 0 6.25 2.734 6.25 6.25s-2.734 6.25-6.25 6.25-6.25-2.734-6.25-6.25 2.734-6.25 6.25-6.25zm0-1.25c-4.142 0-7.5 3.358-7.5 7.5s3.358 7.5 7.5 7.5 7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5z"/></svg>',
-            category: 'Frontend'
-          },
-          {
-            id: '2',
-            name: 'Node.js',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-            category: 'Backend'
-          },
-          {
-            id: '3',
-            name: 'JavaScript',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-            category: 'Programming'
-          },
-          {
-            id: '4',
-            name: 'TypeScript',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
-            category: 'Programming'
-          },
-          {
-            id: '5',
-            name: 'Python',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-            category: 'Programming'
-          },
-          {
-            id: '6',
-            name: 'MySQL',
-            svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
-            category: 'Database'
-          }
-        ])
+        // setSkills([
+        //   {
+        //     id: '1',
+        //     name: 'React',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12.765c.688 0 1.25-.562 1.25-1.25s-.562-1.25-1.25-1.25-1.25.562-1.25 1.25.562 1.25 1.25 1.25zm0-6.5c3.516 0 6.25 2.734 6.25 6.25s-2.734 6.25-6.25 6.25-6.25-2.734-6.25-6.25 2.734-6.25 6.25-6.25zm0-1.25c-4.142 0-7.5 3.358-7.5 7.5s3.358 7.5 7.5 7.5 7.5-3.358 7.5-7.5-3.358-7.5-7.5-7.5z"/></svg>',
+        //     category: 'Frontend'
+        //   },
+        //   {
+        //     id: '2',
+        //     name: 'Node.js',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+        //     category: 'Backend'
+        //   },
+        //   {
+        //     id: '3',
+        //     name: 'JavaScript',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+        //     category: 'Programming'
+        //   },
+        //   {
+        //     id: '4',
+        //     name: 'TypeScript',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
+        //     category: 'Programming'
+        //   },
+        //   {
+        //     id: '5',
+        //     name: 'Python',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+        //     category: 'Programming'
+        //   },
+        //   {
+        //     id: '6',
+        //     name: 'MySQL',
+        //     svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+        //     category: 'Database'
+        //   }
+        // ])
       } finally {
         setLoading(false)
       }
@@ -161,10 +161,12 @@ const Skills = () => {
                         key={skill.id}
                         className="skill-card card p-4 text-center group hover:scale-105 transition-all duration-300 hover:border-accent-500/50"
                       >
-                        <div 
-                          className="w-12 h-12 mx-auto mb-3"
-                          dangerouslySetInnerHTML={{ __html: normalizeSVG(skill.svgIcon) }}
-                        />
+                        <div className="w-12 h-12 mx-auto mb-3 text-accent-500 group-hover:text-white transition-colors duration-300">
+                          <div 
+                            className="w-full h-full"
+                            dangerouslySetInnerHTML={{ __html: normalizeSVG(skill.svgIcon) }}
+                          />
+                        </div>
                         <h4 className="text-sm font-medium text-white group-hover:text-accent-500 transition-colors duration-300">
                           {skill.name}
                         </h4>
@@ -219,7 +221,10 @@ export default Skills
 function normalizeSVG(svg) {
   if (!svg || typeof svg !== 'string') return ''
   const trimmed = svg.trim()
-  if (trimmed.startsWith('<svg')) return trimmed
+  if (trimmed.startsWith('<svg')) {
+    // Ensure the SVG has proper attributes for styling
+    return trimmed.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="currentColor"')
+  }
   // Wrap path-only/svg fragments into a full SVG for consistent rendering
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">${trimmed}</svg>`
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor">${trimmed}</svg>`
 }

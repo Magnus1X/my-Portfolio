@@ -16,38 +16,38 @@ const Projects = () => {
       } catch (error) {
         console.error('Error fetching projects:', error)
         // Set fallback projects
-        setProjects([
-          {
-            id: '1',
-            title: 'E-Commerce Platform',
-            description: 'A full-stack e-commerce application built with React, Node.js, and MySQL. Features include user authentication, product management, shopping cart, and payment integration.',
-            techStack: 'React, Node.js, Express, MySQL, Stripe API',
-            liveUrl: 'https://ecommerce-demo.com',
-            githubUrl: 'https://github.com/sauravkumar/ecommerce',
-            featured: true,
-            imageUrl: ''
-          },
-          {
-            id: '2',
-            title: 'AI Chat Application',
-            description: 'Real-time chat application with AI integration using OpenAI API. Built with React for frontend and Node.js for backend with WebSocket support.',
-            techStack: 'React, Node.js, Socket.io, OpenAI API, MongoDB',
-            liveUrl: 'https://ai-chat-demo.com',
-            githubUrl: 'https://github.com/sauravkumar/ai-chat',
-            featured: true,
-            imageUrl: ''
-          },
-          {
-            id: '3',
-            title: 'Portfolio Website',
-            description: 'Responsive portfolio website with modern animations and smooth scrolling. Built with React, GSAP, and Three.js for interactive 3D elements.',
-            techStack: 'React, GSAP, Three.js, TailwindCSS, Vite',
-            liveUrl: 'https://sauravkumar.dev',
-            githubUrl: 'https://github.com/sauravkumar/portfolio',
-            featured: false,
-            imageUrl: ''
-          }
-        ])
+        // setProjects([
+        //   {
+        //     id: '1',
+        //     title: 'E-Commerce Platform',
+        //     description: 'A full-stack e-commerce application built with React, Node.js, and MySQL. Features include user authentication, product management, shopping cart, and payment integration.',
+        //     techStack: 'React, Node.js, Express, MySQL, Stripe API',
+        //     liveUrl: 'https://ecommerce-demo.com',
+        //     githubUrl: 'https://github.com/sauravkumar/ecommerce',
+        //     featured: true,
+        //     imageUrl: ''
+        //   },
+        //   {
+        //     id: '2',
+        //     title: 'AI Chat Application',
+        //     description: 'Real-time chat application with AI integration using OpenAI API. Built with React for frontend and Node.js for backend with WebSocket support.',
+        //     techStack: 'React, Node.js, Socket.io, OpenAI API, MongoDB',
+        //     liveUrl: 'https://ai-chat-demo.com',
+        //     githubUrl: 'https://github.com/sauravkumar/ai-chat',
+        //     featured: true,
+        //     imageUrl: ''
+        //   },
+        //   {
+        //     id: '3',
+        //     title: 'Portfolio Website',
+        //     description: 'Responsive portfolio website with modern animations and smooth scrolling. Built with React, GSAP, and Three.js for interactive 3D elements.',
+        //     techStack: 'React, GSAP, Three.js, TailwindCSS, Vite',
+        //     liveUrl: 'https://sauravkumar.dev',
+        //     githubUrl: 'https://github.com/sauravkumar/portfolio',
+        //     featured: false,
+        //     imageUrl: ''
+        //   }
+        // ])
       } finally {
         setLoading(false)
       }

@@ -103,7 +103,7 @@ const Footer = () => {
               })}
             </div>
             <div className="text-sm text-gray-400">
-              <p>📧 {userInfo?.email || 'contact@sauravkumar.dev'}</p>
+              <p>📧 {userInfo?.email || '95sauravkumar95@gmail.com'}</p>
               {/* <p>📍 Available for freelance work</p> */}
             </div>
           </div>

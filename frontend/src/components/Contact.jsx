@@ -26,7 +26,7 @@ const Contact = () => {
       } catch (error) {
         console.error('Error fetching user info:', error)
         setUserInfo({
-          email: 'contact@sauravkumar.dev',
+          email: '95sauravkumar95@gmail.com',
           location: 'India'
         })
       } finally {
@@ -190,21 +190,23 @@ const Contact = () => {
 
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone size={24} className="text-accent-500" />
+                    <span className="text-accent-500 text-2xl">🎓</span>
                   </div>
                   <div>
-                    <h4 className="text-white font-medium mb-1">Availability</h4>
-                    <p className="text-gray-400">Available for freelance work</p>
+                    <h4 className="text-white font-medium mb-1">Education</h4>
+                    <p className="text-gray-400">Bachelor's Student</p>
                   </div>
                 </div>
               </div>
 
               {/* Response Time */}
               <div className="card p-6">
-                <h4 className="text-white font-medium mb-3">Response Time</h4>
+                <h4 className="text-white font-medium mb-3">Current Status</h4>
                 <p className="text-gray-400 text-sm">
-                  I typically respond to emails within 24 hours. For urgent matters, 
-                  please mention it in your message.
+                  Seeking: Internship & Entry-level Opportunities
+                </p>
+                <p className="text-gray-400 text-sm">
+                  Available for: Part-time projects & collaborations
                 </p>
               </div>
             </div>

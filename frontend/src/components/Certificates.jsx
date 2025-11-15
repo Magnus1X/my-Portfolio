@@ -17,35 +17,35 @@ const Certificates = () => {
       } catch (error) {
         console.error('Error fetching certificates:', error)
         // Set fallback certificates
-        setCertificates([
-          {
-            id: '1',
-            title: 'Full Stack Web Development',
-            issuer: 'FreeCodeCamp',
-            issueDate: '2023-06-15',
-            credentialId: 'FCC-FSWD-2023',
-            credentialUrl: 'https://freecodecamp.org/certification/sauravkumar/full-stack-web-development',
-            imageUrl: ''
-          },
-          {
-            id: '2',
-            title: 'AWS Certified Developer',
-            issuer: 'Amazon Web Services',
-            issueDate: '2023-09-20',
-            credentialId: 'AWS-DEV-123456',
-            credentialUrl: 'https://aws.amazon.com/verification',
-            imageUrl: ''
-          },
-          {
-            id: '3',
-            title: 'React Developer Certification',
-            issuer: 'Meta',
-            issueDate: '2023-03-10',
-            credentialId: 'META-REACT-789',
-            credentialUrl: 'https://coursera.org/verify/react-cert',
-            imageUrl: ''
-          }
-        ])
+        // setCertificates([
+        //   {
+        //     id: '1',
+        //     title: 'Full Stack Web Development',
+        //     issuer: 'FreeCodeCamp',
+        //     issueDate: '2023-06-15',
+        //     credentialId: 'FCC-FSWD-2023',
+        //     credentialUrl: 'https://freecodecamp.org/certification/sauravkumar/full-stack-web-development',
+        //     imageUrl: ''
+        //   },
+        //   {
+        //     id: '2',
+        //     title: 'AWS Certified Developer',
+        //     issuer: 'Amazon Web Services',
+        //     issueDate: '2023-09-20',
+        //     credentialId: 'AWS-DEV-123456',
+        //     credentialUrl: 'https://aws.amazon.com/verification',
+        //     imageUrl: ''
+        //   },
+        //   {
+        //     id: '3',
+        //     title: 'React Developer Certification',
+        //     issuer: 'Meta',
+        //     issueDate: '2023-03-10',
+        //     credentialId: 'META-REACT-789',
+        //     credentialUrl: 'https://coursera.org/verify/react-cert',
+        //     imageUrl: ''
+        //   }
+        // ])
       } finally {
         setLoading(false)
       }

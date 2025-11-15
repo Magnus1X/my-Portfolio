@@ -15,11 +15,14 @@ const About = () => {
         setUserInfo(response.data)
       } catch (error) {
         console.error('Error fetching user info:', error)
+        // setUserInfo({
+        //   name: 'Saurav Kumar',
+        //   summary: 'Passionate developer creating innovative solutions with modern technologies. Specializing in React, Node.js, and AI/ML applications.',
+        //   location: 'India',
+        //   email: 'contact@sauravkumar.dev'
+        // })
         setUserInfo({
-          name: 'Saurav Kumar',
-          summary: 'Passionate developer creating innovative solutions with modern technologies. Specializing in React, Node.js, and AI/ML applications.',
-          location: 'India',
-          email: 'contact@sauravkumar.dev'
+          Error:"Data is being loaded"
         })
       } finally {
         setLoading(false)
