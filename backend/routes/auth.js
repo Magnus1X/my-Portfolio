@@ -1,12 +1,11 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const prisma = require('../config/database');
 
 const router = express.Router();
 
-// Login route
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 })
@@ -14,7 +13,7 @@ router.post('/login', [
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
+      return res.status(400).json({ message: 'Validation Failed', errors: errors.array() });
     }
 
     const { email, password } = req.body;
