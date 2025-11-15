@@ -42,7 +42,7 @@ if (process.env.NODE_ENV === 'production') {
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.vercel.app', 'https://your-custom-domain.com']
+    ? ['https://your-frontend-render-url.onrender.com', 'https://my-portfolio-frontend-puja.onrender.com']
     : true,
   credentials: true
 }));
