@@ -41,9 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-render-url.onrender.com', 'https://my-portfolio-frontend-puja.onrender.com']
-    : true,
+  origin: true,
   credentials: true
 }));
 
@@ -66,6 +64,26 @@ app.use('/api/messages', messageRoutes);
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Debug endpoint
+app.get('/api/debug', async (req, res) => {
+  try {
+    const userCount = await prisma.user.count();
+    const skillCount = await prisma.skill.count();
+    res.json({ 
+      database: 'connected',
+      users: userCount,
+      skills: skillCount,
+      env: process.env.NODE_ENV
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      database: 'error',
+      error: error.message,
+      env: process.env.NODE_ENV
+    });
+  }
 });
 
 // Error handling middleware
